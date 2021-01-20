@@ -295,6 +295,7 @@ class HomeLayoutAdmin {
 
 ## Reference
 - [(이 디렉토리가 다루는 문서) Kotilin Docs](https://kotlinlang.org/docs/reference/basic-syntax.html)
+- [(코드 스니펫 작성 및 실행) Kotlin Platground](https://play.kotlinlang.org/)
 - [자바 개발자 관점의 - 왜 코틀린인가? by 강현식](https://www.youtube.com/watch?v=HhifPEExguA&ab_channel=JetBrainsTV)
 - [Google I/O 2017 참관기 - Kotlin](https://d2.naver.com/helloworld/7543578)
 - [노마드 코더 - 코틀린이 자바를 대체할 수 있을까?](https://www.youtube.com/watch?v=8gseVzeMOzk&ab_channel=%EB%85%B8%EB%A7%88%EB%93%9C%EC%BD%94%EB%8D%94NomadCoders)
