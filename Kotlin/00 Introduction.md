@@ -6,6 +6,7 @@
 ## Why Kotlin?
 1. 문법의 간결함
     - 직관적, 간결함, 적은 중복
+    - 익숙함: scala, C#, groovy, swift, ...
 2. Null Safety
     - 자바: 런타임에 NPE
     - 코틀린: 컴파일 시점에 null 관련 문제를 처리하게 함
@@ -27,13 +28,23 @@
     - 코루틴 (비동기, Actor)
     - Delegate
     - Reified
-    - Smart Cast
+    - Smart Cast (`is`, `as`)
+    - 타입 추론
 5. 툴 친화적
     - 개발사: JetBrains
     - 지원 IDE: IntelliJ, Eclipse, ...
 6. 안드로이드만...?
     - 구글이 안드로이드 공식 언어로 채택
     - 카카오톡 채팅 서버: 코드량 감소, 생산성 향상
+
+
+## 생각해 보아야 할 단점들
+1. namespace가 없다. (자바의 package 개념. 가져다 쓸 때 헷갈릴 수 있음.)
+2. static modifier가 없다. (모든 것을 `companion object`로 처리해야 함)
+3. 스칼라보다는 훨씬 낫지만, 빌드 시간이 자바에 비해 조금 더 걸린다.
+4. 디폴트 설정이 `final` (즉, 기본으로 상속 불가. 안정적이고, 좀 더 빠르기 때문이라 그럴 듯)
+5. 바이트코드 사이즈가 자바에 비해 늘어난다.
+6. 커뮤니티 부족
 
 
 ## IntelliJ에서 코틀린 사용하기
@@ -302,3 +313,4 @@ class HomeLayoutAdmin {
 - [Calling Java Codes from Kotlin](https://medium.com/kayvan-kaseb/calling-java-codes-from-kotlin-b74890fb4a78)
 - [Java를 Kotlin으로 변환하기(Convert Java to Kotlin)](https://thatisgood.tistory.com/entry/Java-to-Kotlin)
 - [Kotlin 도입 과정에서 만난 문제와 해결 방법](https://d2.naver.com/helloworld/6685007)
+- [스프링캠프 2018 [TrackB Session2] : 쿠팡 Kotlin Backend 적용기](https://www.youtube.com/watch?v=bhI1hMOcT-4)
