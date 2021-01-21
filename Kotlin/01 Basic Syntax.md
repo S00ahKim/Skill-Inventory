@@ -25,7 +25,9 @@ fun 함수이름(인자이름: 인자타입, ...): 리턴타입 {
 }
 ```
 1. 리턴 값이 없는 경우(void처럼) Unit으로 리턴 타입 기재
+   * void와 Unit이 완전히 같은 것은 아니다. 자바와 함께 사용시 Unit 타입 사용 필요.
 2. 리턴 타입이 Unit일 경우, 생략할 수 있음
+3. 리턴 타입을 추론할 수 있는 경우, 생략할 수 있음
 
 ### idioms
 1. 함수 파라미터에 기본값 설정 가능
@@ -41,13 +43,18 @@ fun String.spaceToCamelCase() { ... }
 ```kotlin
 fun sum(a:Int, b:Int) : Int = a + b
 ```
+4. lambda expression
+- fun 키워드와 함수 이름을 생략함
+- 문법은 `{ 파라미터 -> 내용 }` (파라미터 타입 선언 필요, 추론 가능할 경우 생략)
+- 리턴 값은 내용의 마지막 expression
+- 파라미터가 하나일 경우, it으로 표현 가능
 
 
 ## 변수
 1. val (변경 불가능(read-only, immutable), = 자바의 final 키워드)
 ```kotlin
 val a: Int = 1  // immediate assignment (선언부에서 초기화됨)
-val c: Int      // 초기값이 없을 경우 타입을 명시해야 함 <?> lazy init?
+val c: Int      // 초기값이 없을 경우 타입을 명시해야 함
 c = 3           // deferred assignment (선언부가 아니라 나중에 초기화됨)
 ```
 2. var (변경 가능(mutable))
@@ -77,7 +84,10 @@ val s2 = "${s1.replace("is", "was")}, but now is $a" //a was 2, but now is 2
 
 
 ## 조건문 (if)
-- `statement`: 액션을 수행하는 코드 (모든 expression은 statement)
+- `statement`
+    * 서술
+    * 실행 가능(executable)한 최소한의 독립적인 코드 조각
+    * 모든 expression은 statement
 ```kotlin
 fun maxOf(a: Int, b: Int): Int {
     if (a > b) {
@@ -87,8 +97,12 @@ fun maxOf(a: Int, b: Int): Int {
     }
 }
 ```
-- `expression`: 값을 산출하는 코드, 인자로 들어갈 수 있음 <?>
+- `expression`
+    * 수식
+    * 하나 이상의 값으로 표현(reduce)될 수 있는 코드
+    * 평가(evaluate)가 가능 -> 하나의 ‘값’으로 환원
 ```kotlin
+// if가 expression이기 때문에 삼항 연산자를 지원하지 않는다.
 fun maxOf(a: Int, b: Int) = if (a > b) a else b
 ```
 
@@ -126,14 +140,14 @@ val email = values["email"] ?: throw IllegalStateException("Email is missing!")
 ```kotlin
 val value = ...
 value?.let {
-    ... // execute this block if not null
+    ... // null이 아닐 경우 이 블록 실행
 }
 ```
 5. null이 가능한 map value에 대한 if not null
 ```kotlin
 val value = ...
 val mapped = value?.let { transformValue(it) } ?: defaultValue 
-// defaultValue is returned if the value or the transform result is null.`
+// value가 null이거나 transformValue(it)이 null일 경우 defaultValue가 리턴됨
 ```
 
 
@@ -260,6 +274,7 @@ fun describe(obj: Any): String =
         !is String -> "Not a string"
         else       -> "Unknown"
     }
+    // 자바 switch와 유사
 
 fun main() {
     println(describe(1))        // One
@@ -278,7 +293,7 @@ fun transform(color: String): Int {
         "Red" -> 0
         "Green" -> 1
         "Blue" -> 2
-        else -> throw IllegalArgumentException("Invalid color param value")
+        else -> throw IllegalArgumentException("허용되지 않은 색깔입니다.")
     }
 }
 ```
@@ -321,33 +336,50 @@ for (i in 1 until 100) { ... } // 1부터 99까지 순회
 
 
 ## Collection
+- 지원하는 자료구조: List, Map, Set
+    * immutable: 자료구조of
+    * mutable: mutable자료구조of
 ```kotlin
-/* 지원하는 자료구조: List, Map, Set
-    immutable: 자료구조of
-    mutable: mutable자료구조of
-*/
 val fruits = listOf("avocado", "banana", "apple")
 val veggies = setOf("tomato", "carrot", "lettuce")
 val fruitsCode = mutableMapOf<String, String>(
     "avocado" to "AVO", "banana" to "BAN", "apple" to "APP")
+```
+- 지원하는 기능은 아주 많으며, 그룹으로 묶어보면 아래와 같음
+    1. Creation — 컬렉션을 생성하는 함수 (ex : listOf)
+    2. Convert — 다른 유형으로 캐스팅하는 함수 (ex: asMap)
+    3. Change — 내용을 변환하는 함수 (ex: map)
+    4. Choose — 항목 중 하나에 접근하는 함수(ex : get)
+    5. Conclude — 항목에서 무언가를 생성하는 함수(ex: sum)
 
-// 값에 접근하기 (... etc.)
+### 값에 접근하기 (... etc.)
+```kotlin
 println(fruits.get(0))          // avocado
 println(veggies.elementAt(0))   // tomato
 println(fruitsCode["avocado"])  // AVO
 fruitsCode["avocado"] = "AVC"
+```
 
-// 콜렉션 안에 어떤 오브젝트가 포함되어 있는지 확인하기 -> in
+### 콜렉션 안에 어떤 오브젝트가 포함되어 있는지 확인하기 -> in
+```kotlin
 when {
     "orange" in fruits -> println("냠냠")
     "apple" in fruits -> println("사과 냠냠")
 }
 // 사과 냠냠
+```
 
-// 콜렉션 filter와 map은 람다식 사용 가능 <?>
+### 콜렉션 filter와 map에서 lambda expression 사용 가능
+```kotlin
+/* 
+    !!주의!!
+    it은 임시로 붙인 변수 이름이 아니라 
+    lambda expression에 파라미터가 하나일 때 사용하는 "키워드"
+    (= 다른 이름을 쓰면 에러 발생)
+*/
 fruits
   .filter { it.startsWith("a") }
-  .sortedBy { it } //이게 ㄱㄴㄷ순?
+  .sortedBy { it }
   .map { it.toUpperCase() }
   .forEach { println(it) }
 /*
@@ -356,21 +388,41 @@ AVOCADO
 */
 ```
 
-## idioms
+### idioms
 1. 리스트 필터링
 ```kotlin
 val positives = list.filter { x -> x > 0 }
-val positives = list.filter { it > 0 } <?> 꼭 it이어야 하는 건가?
+val positives = list.filter { it > 0 }
 ```
+- [it-implicit-name-of-a-single-parameter](https://kotlinlang.org/docs/reference/lambdas.html#it-implicit-name-of-a-single-parameter)
 2. 특정 엘리먼트가 존재하는지 확인
 ```kotlin
 if ("john@example.com" in emailsList) { ... }   // in
 if ("jane@example.com" !in emailsList) { ... }  // not in
 ```
-3. map/list pair traversing <?>
+3. map/list pair traversing(순회)
 ```kotlin
+// 자바의 방법들보다 간결함
 for ((k, v) in map) {
     println("$k -> $v")
+}
+```
+```java
+// 방법1
+Iterator<String> keys = map.keySet().iterator();
+while( keys.hasNext() ){
+    String key = keys.next();
+    System.out.println( String.format("키 : %s, 값 : %s", key, map.get(key)) );
+}
+ 
+// 방법2
+for( Map.Entry<String, String> elem : map.entrySet() ){
+    System.out.println( String.format("키 : %s, 값 : %s", elem.getKey(), elem.getValue()) );
+}
+ 
+// 방법3
+for( String key : map.keySet() ){
+    System.out.println( String.format("키 : %s, 값 : %s", key, map.get(key)) );
 }
 ```
 
@@ -419,3 +471,9 @@ Area of rectangle is 10.0, its perimeter is 14.0
 Area of triangle is 6.0, its perimeter is 12.0
 */
 ```
+
+
+# Reference & Learn More
+- [코드 단위인 Expression과 Statement의 차이를 알아보자](https://shoark7.github.io/programming/knowledge/expression-vs-statement)
+- [Kotlin Collection Functions Cheat Sheet](https://medium.com/mobile-app-development-publication/kotlin-collection-functions-cheat-sheet-975371a96c4b)
+- [Kotlin의 Collection 함수 (번역)](https://medium.com/hongbeomi-dev/kotlin-collection-%ED%95%A8%EC%88%98-7a4b1290bce4)
