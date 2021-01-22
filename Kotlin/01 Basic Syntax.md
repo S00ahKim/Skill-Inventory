@@ -123,11 +123,13 @@ fun parseInt(str: String): Int? {
 ### idioms
 1. if not null
 ```kotlin
+// null safe operator
 val files = File("Test").listFiles()
 println(files?.size)
 ```
 2. if not null & else
 ```kotlin
+// elvis operator
 val files = File("Test").listFiles()
 println(files?.size ?: "empty")
 ```
