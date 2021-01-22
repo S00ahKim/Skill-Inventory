@@ -112,7 +112,7 @@ inline fun <reified T> function(argument: T)
 
 ## 초기화 지연
 - 언제 사용하나요? 실제로 필요하기 전까지 비용이 많이 드는 객체 생성을 지연하고자 할 때 (성능 최적화 용도)
-- deferred assignment과의 차이점? d.a.는 체크카드고, l.i.는 신용카드 같은 것.
+- deferred assignment과의 차이점? d.a.는 변수에 대한 것, l.i.는 객체 생성에 대한 것.
 - lazy evaluation과의 차이점? l.e.는 효율적인 연산에 대한 개념, l.i.도 일종의 l.e.이지만, 인스턴스화에 초점이 맞춰져 있음.
 
 ### 1. Late initialization
