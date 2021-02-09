@@ -1,14 +1,21 @@
 # 동기(Synchronous), 비동기(Asynchronous), Promise
 1. 동기: 요청을 보낸 뒤 요청의 응답을 받고 다음 작업 실행
 2. 비동기: 요청을 보낸 뒤 응답과 관계 없이 다음 작업 실행
-3. Promise: 
+3. Promise: 비동기 작업이 맞이할 미래의 완료 또는 실패와 그 결과 값을 나타내는 객체
 
 
 ## 자바스크립트의 특성
 1. Single Thread
+    * 자바스크립트는 하나의 메인 쓰레드와 하나의 콜스택을 가짐
 2. Synchronous
+    * 자바스크립트 런타임 자체적으로 비동기 API를 지원하는 것이 아님
+    * 비동기 처리는 런타임 환경에서 담당
 3. Call Stack
+    * 자바스크립트 런타임은 메모리 할당을 담당하는 `메모리 힙`과 코드가 호출되어 스택으로 쌓이는 `콜 스택`으로 구성됨
 4. Blocking
+    * 블로킹? 콜 스택이 멈춘 상태 (어떤 작업이 실행 완료되기를 기다리며 다른 작업을 수행할 수 없는 상태)
+
+cf. `런타임`? 자바스크립트 엔진을 구동하는 환경. 브라우저 또는 Node.js 등
 
 
 ## 자바스크립트에서 비동기적으로 처리하기
@@ -71,3 +78,7 @@
     * 코드의 가독성이 훨씬 나음. (여러개의 비동기 처리를 다루는 등)
     * async가 붙은 함수 내에서만 await를 사용 가능.
     * 에러 핸들링에 try-catch문 사용 가능.
+
+
+# References
+- [MDN Web Docs - Promise](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise)
