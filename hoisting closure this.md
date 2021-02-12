@@ -36,7 +36,7 @@
     * ES6의 let, const키워드는 블록 레벨 스코프 변수를 만들어 준다. (블록 내부에서 유효한 식별자)
     * arrow function으로 implicit한 리턴을 하는 게 아니라면, 이는 함수 스코프의 subset
 
-1. 기타 참고
+3. 기타 참고
 ![Closure_1](images/Closure_1.png)
 - 렉시컬 스코프(Lexical scope)
     * a.k.a. 정적 스코프(Static scope) 또는 수사적 스코프(Rhetorical scope)
