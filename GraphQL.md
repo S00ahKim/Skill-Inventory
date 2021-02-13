@@ -43,3 +43,4 @@ query {
 - [GraphQL and Apollo](https://www.yalco.kr/lectures/graphql-apollo/)
 - [GraphQL과 RESTful API](https://www.holaxprogramming.com/2018/01/20/graphql-vs-restful-api/)
 - [gRPC 서비스와 HTTP API 비교](https://docs.microsoft.com/ko-kr/aspnet/core/grpc/comparison?view=aspnetcore-5.0)
+- [GraphQL과 REST의 차이점](https://hwasurr.io/api/rest-graphql-differences/)
