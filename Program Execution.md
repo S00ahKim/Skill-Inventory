@@ -140,3 +140,4 @@
 - [메모리의 구조](http://www.tcpschool.com/c/c_memory_structure)
 - [(정적할당/동적할당) 스택(stack)과 힙(heap)영역](https://blog.naver.com/star7sss/220851224606)
 - [JIT - Just in Time Compiler](https://plas.tistory.com/44?category=768972)
+- [1장. 컴퓨터구조에 대한 첫번째 이야기](https://awesome-dev.tistory.com/35?category=742265)
