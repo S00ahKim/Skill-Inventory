@@ -24,8 +24,16 @@
       - 1.0 (메서드, 멀티미디어 처리 등 널리 쓰이는 관례 모음)
       - 1.0+ (keep-alive connection, 가상 호스팅 지원, 프록시 연결 지원 등 사실상의 표준)
       - 1.1 (구조 개선, 성능 최적화 등 표준)
-      - 2.0 (성능 개선, SPDY 프로토콜 기반으로 설계 중)
+      - 2.0 (성능 & 속도 개선, SPDY 프로토콜 기반으로 설계)
         * SPDY는 HTTP의 데이터 전송 포맷과 커넥션 관리 부분을 고쳐서 TCP 커넥션을 보다 효율적으로 쓰도록 만든 것 [참고](https://d2.naver.com/helloworld/140351)
+        * HTTP1.1의 문제? 동시전송 문제 & 다수의 리소스를 처리하기에 속도와 성능 이슈 ex.HOL(Head Of Line) Blocking-특정응답지연, RTT(Round Trip TIme) 증가, 헤비한 Header 구조
+        * 기존의 해결 과정? 이미지 스프라이트, 도메인샤딩, CSS/JavaScript 압축, Data URI 등
+        * HTTP2.0의 특징? [참고](https://medium.com/@shlee1353/http1-1-vs-http2-0-%EC%B0%A8%EC%9D%B4%EC%A0%90-%EA%B0%84%EB%8B%A8%ED%9E%88-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-5727b7499b78)
+            1. Multiplexed Streams(한 커넥션에 여러개의 메세지를 동시에 주고 받을 수 있음)
+            2. Stream Prioritization(요청 리소스간 의존관계를 설정)
+            3. Server Push(HTML 문서 상에 필요한 리소스를 클라이언트 요청없이 보내줄 수 있음)
+            4. Header Compression(Header 정보를 HPACK 압축 방식을 이용하여 압축 전송)
+        * [구글의 소개 문서](https://developers.google.com/web/fundamentals/performance/http2?hl=ko)
 11. 다양한 웹 애플리케이션 형태
     1. `프록시`는 클라이언트와 서버 사이에 위치한 HTTP 중개자다.
        - 클라이언트의 요청을 (대개 수정하여) 서버에 전달함
