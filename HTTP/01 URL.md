@@ -16,4 +16,11 @@
     - 정보 유실 없이 전송하기 위해 일반적으로 안전한 알파벳만 사용하도록 함
     - 다른 문자를 쓰려고 할 경우 % 기호를 추가하는 등 이스케이프 문자로 전환함
     - 이런 문자열 인코딩은 클라이언트(브라우저) 단에서 하는 것이 좋음
+    * 문자열 인코딩 [참고](https://onlywis.tistory.com/2)
+        1. ASCII(American Standard Code for Information Interchange): 7bit. 최초의 문자열 인코딩. 영어와 일부 특수문자만 고려.
+        2. ANSI(American National Standard Institute): 8bit. 아스키 코드에 언어별 코드 값과 코드별로 의미하는 문자를 표현하는 CodePage를 포함
+        3. EUC-KR(Extended Unix Code-Korea): 한글 지원을 위해 유닉스 계열에서 나온 완성형 코드 조합
+        4. CP949(Code Page 949): 한글 지원을 위해 윈도우즈 계열에서 나온 확장 완성형 코드 조합
+        5. UTF-8(Universal Coded Character Set + Transformation Format – 8-bit): 유니코드를 위한 가변 길이 문자 인코딩(멀티바이트) 방식 중 하나. 
+        6. UNICODE: 전 세계의 모든 문자를 컴퓨터에서 일관되게 표현할 수 있도록 고안된 코드 조합. 유니코드는 인코딩은 아니다. 문자를 2바이트 숫자로 매핑하는 방식이며, 유니코드를 표현하는 많은 인코딩 방식이 따로 존재한다.
 6. PURL로 URL을 사용해 URN의 기능을 제공할 수 있다. PURL은 리소스의 실제 URL 목록을 관리하고 추적하는 리소스 위치 중개 서버를 두고 해당 리소스를 우회적으로 제공한다.
