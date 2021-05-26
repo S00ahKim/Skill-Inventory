@@ -1,4 +1,4 @@
-# Helm
+# Helm Overview
 - Kubernetes 상의 배포를 위한 Package Manager (패키지 = 차트)
 - Kubernetes 클러스터에서 어플리케이션의 구성, 설정을 관리하기 위해 개발
 - 헬름은 쿠버네티스 내부에 `charts`를 설치하고, 각 설치에 대해 새로운 `release`를 생성한다. 새로운 차트를 찾기 위해 헬름 차트 `repositories` 를 검색할 수 있다.
