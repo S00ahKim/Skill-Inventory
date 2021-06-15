@@ -62,6 +62,7 @@
 ## Lazy Evaluation
 - Transformation은 그 RDD를 사용하는 Action 호출 전까지 실제로 Transformation을 수행하지 않음
 - 장점: 지역성 최적화 -> 불필요한 네트워크 통신 줄임
+- 단점: Action이 두 번 호출되면 Transformation도 두 번 호출됨. 적절하게 캐싱하는 것이 필요.
 
 ## 람다 아키텍처
 - [구조도](http://lambda-architecture.net/)
