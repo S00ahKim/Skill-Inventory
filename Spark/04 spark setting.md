@@ -62,7 +62,7 @@ val sc = new SparkContext(conf)
             2. $SPARK_HOME/sbin/start-mesos-shuffle-service.sh 스크립트를 실행해 외부 셔플 프로세스 실행
         + yarn 모드
             1. 모든 노드 매니저 클래스패스에 스파크 배포본의 spark-{version}-yarn-shuffle.jar 파일을 등록
-            2. 각 노드 매니저의 yarn-site.xml 파일에 spark_shuffle 속성을 yarn. odemanager.aux-services로 설정
+            2. 각 노드 매니저의 yarn-site.xml 파일에 spark_shuffle 속성을 yarn.odemanager.aux-services로 설정
             3. yarn.nodemanager.aux-services.spark_shuffle.class 속성을 org.apache.spark.network.yarn.YarnShuffleService로 설정
             4. spark.shuffle.service.enabled 속성을 true로 설정
             5. yarn 재실행
