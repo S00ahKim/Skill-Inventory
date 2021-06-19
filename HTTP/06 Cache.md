@@ -12,6 +12,7 @@
   - [캐시 제어 설정](#캐시-제어-설정)
   - [자세한 알고리즘](#자세한-알고리즘)
   - [캐시와 광고](#캐시와-광고)
+  - [+a](#a)
 
 ---
 
@@ -267,3 +268,13 @@
 4. 적중 측정과 사용량 제한
     - Meter 헤더: 특정 URL에 대한 캐시 적중 횟수를 정기적으로 서버에게 돌려줌
     - 사용량 제한: 서버는 캐시가 문서를 제공할 수 있는 횟수나 소모할 수 있는 처리 시간을 제한할 수 있음
+
+
+## +a
+- 로컬 캐시: 로컬 서버 장비의 Resource를 이용해서 서버마다 저장하는 캐시. 속도가 빠르지만 다른 서버에서의 참조가 어려움. ex. ehcache(heap)
+- 글로벌 캐시: 별도의 캐시 서버를 이용하기 때문에 서버 간 데이터 공유가 쉽고, 데이터 분산 저장이 가능함. ex. Redis
+- DB로서의 캐시
+    * 이 장에서 다룬 내용들은 `클라이언트 - 캐시 - 서버`에 대해 다룸
+    * 이 외에도 `클라이언트 - 서버 - 캐시`와 같이 사용되는 경우도 있음 (ex. [Redis](https://brunch.co.kr/@jehovah/20))
+- [스프링 부트 캐싱](https://docs.spring.io/spring-boot/docs/2.1.12.RELEASE/reference/html/boot-features-caching.html#boot-features-caching-provider)
+- [캐싱 전략과 사용 예제](https://wnsgml972.github.io/database/2020/12/13/Caching/)
