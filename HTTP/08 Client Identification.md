@@ -133,6 +133,13 @@
     * 세션 ID로 클라이언트를 구분해서 클라이언트의 요구에 맞는 서비스를 제공
     * 보안 면에서 쿠키보다 우수
     * 사용자가 많아질수록 서버 메모리를 많이 차지하게 됨
+- 쿠키 사용하는 방법
+    * 서버는 접근한 클라이언트의 Request-Header 필드인 Cookie를 확인 -> 클라이언트가 해당 session-id를 보냈는지
+    * 서버가 클라이언트에 준 세션 아이디를 클라이언트는 쿠키에 저장함 (JSESSIONID)
+- Web API를 사용하는 방법
+    * SessionStorage: session cookies와 비슷. 말 그대로 세션을 위한 저장 공간이며 세션이 종료되면 모두 삭제됨. 쿠키와 다르게 서버에서 접근할 수 없기 때문에, 클라이언트에서 스토리지의 값을 꺼내서 서버에 전달해주어야 함
+    * localStorage: persistent cookies와 비슷. 쿠키는 만료기간이 지나면 삭제되지만 로컬 스토리지의 데이터는 반 영구적으로 저장가능. 세션 스토리지와 마찬가지로 클라이언트에서 스토리지 값을 꺼내서 서버에 전달해주어야 함.
+    * 보안이 크게 중요하지 않다면 로컬 스토리지는 나쁘지 않은 선택이 될 수 있습니다. 쿠키와 다르게 반 영구적으로 많은 저장 공간을 사용할 수 있기 때문에 처음에 한 번 인증만으로 다시는 인증을 하지 않아도 되도록 편하게 구현할 수 있습니다. 하지만 보안의 측면에서 웹 스토리지(로컬 스토리지 + 세션 스토리지)는 좋지 못하다고 할 수 있습니다. **웹 스토리지에 저장된 값은 javascript 코드를 통해 언제든지 접근할 수 있는데, 이는 웹 사이트에 악의적인 스크립트를 넣어 의도하지 않은 동작을 발생시키는 XSS(cross-site scripting)공격에 취약**합니다. 반면 쿠키에 저장한 값은 HttpOnly 속성을 통해 javascript를 통한 접근을 막을 수 있습니다. 때문에 보안적인 측면을 생각한다면 웹 스토리지보다는 쿠키에 저장하는 것이 좋다고 할 수 있습니다. [출처: 토큰을 어디에 저장할까?](https://woowacourse.github.io/javable/post/2020-08-31-where_to_store_token/), [참고: 로컬 스토리지, 세션 스토리지, 쿠키 비교](https://krishankantsinghal.medium.com/local-storage-vs-session-storage-vs-cookie-22655ff75a8), [참고: 비교2](https://stackoverflow.com/questions/19867599/what-is-the-difference-between-localstorage-sessionstorage-session-and-cookies), [참고: JWT 토큰과 보안](https://dev.to/gkoniaris/how-to-securely-store-jwt-tokens-51cf)
 
 ### 쿠키와 캐싱
 - **주의** 쿠키와 관련된 문서를 캐싱하면 사용자의 쿠키가 다른 사용자에게 할당되거나, 개인 정보가 노출될 수 있음
