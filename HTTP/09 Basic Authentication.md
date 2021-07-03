@@ -20,14 +20,17 @@
         1. 요청
         2. 인증 요구
             + Basic : 기본 인증 스킴으로 ID/PW 를 base64 encoding 하여 전달
+                + `Authorization: <type> <credentials>` 등에 기술되는 type 중 하나. Basic, Bearer, Digest, ...
             + realm : 인증을 요구하는 공간이나 범위에 대한 설명
         3. 인증
             + WWW-Authenticate 헤더에 정의된 스킴에 맞춰 Authorization 헤더에 ID/PW 쌍을 기술하여 전송
         4. Authentication-info
             + 추가적인 인증 알고리즘에 대한 정보를 기술
 - OAuth
+    * 다른 서비스의 회원 정보를 안전하게 사용하기 위한 방법
     * HTTP의 인증 요구-응답 프로토콜 사용하는 인증 프로토콜
-    * 모바일 기기 등 다양한 애플리케이션에서 API 인증을 위해 사용
+    * 모바일 기기 등 다양한 애플리케이션에서 API 인증을 위해 액세스 토큰 등을 사용
+    * ex. 네이버로 로그인하기, 페이스북으로 로그인하기 등
 - 보안 영역
     * HTTP가 각 리소스마다 다른 접근 조건을 다루는 방법
     * realm (보안 영역. `WWW-Authenticate` 헤더 안에 기술.)
