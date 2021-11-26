@@ -13,3 +13,4 @@
       * [컴퓨터 구조와 기능](https://velog.io/@ckstn0777/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0-%EC%BB%B4%ED%93%A8%ED%84%B0-%EA%B5%AC%EC%A1%B0%EC%99%80-%EA%B8%B0%EB%8A%A5-CPU)
 2. [02 OS Structures](02%20OS%20Structures.md)
 3. [Process](03%20Process.md)
+      * [동시성(Concurrency) vs 병렬성(Parallelism)](https://seamless.tistory.com/42)
