@@ -98,3 +98,34 @@
     - exit()
     - 부모X, 자식O: 자식이 orphan. 자식은 그 상위 프로세스를 부모로 바라봄
     - 부모O, 자식X, 자식 정보 회수 안함: 자식이 zombie.  (종료되었으나 메모리에 남아 있다) 부모가 wait() 호출시 제거됨.
+
+
+## Interprocess Communication (IPC)
+- 프로세스는 독립적으로 동작하거나 서로 협력하며 동작할 수 있다.
+- 협력 프로세스들 간에는 통신이 필요하다. 데이터를 주고받는 방법은 IPC 매커니즘에는 크게 두 가지가 있다.
+    1. Shared Memory (게시판)
+        * 특정 메모리 공간을 두 프로세스가 공유함
+        * 장점: 속도가 빠름
+        * 단점: 메모리에 동시에 접근하는 것을 막기 위한 별도의 구현 필요
+        * Producer-Consumer Problem
+            + 생산 속도가 소비 속도보다 빨라서 동기화 문제가 발생할 수 있기 때문에 생산된 데이터를 buffer에 담아 둔다.
+            + 생산자는 buffer를 채우고, 소비자는 buffer를 비운다.
+            + 크기의 한계가 있는 버퍼는 Bounded buffer, 버퍼의 시작과 끝을 이어붙여 크기가 무한한 버퍼를 Unbounded buffer라 한다.
+    2. Message Passing (우편)
+        * `커널`을 통해 데이터를 전달
+        * 장점: 커널이 기본적 기능(ex. 시스템 콜 send() 등)을 제공하여 구현이 쉬움
+        * 단점: 커뮤니케이션 링크를 만들어야 하는 등의 과정으로 인해 컨텍스트 스위칭 발생 (속도 느림)
+            + physical communication link: shared memory, hardware bus, network
+            + logical communication link
+                - direct or indirect
+                    - direct: 일대일 통신. 명시적으로 특정한 수신자나 생산자를 지정하면 자동으로 링크가 생성된다.
+                    - indirect: 다대다 통신. 메시지는 포트(mailbox)에서 송수신된다.
+                - synchronous or asynchronous
+                - automatic or explicit buffering
+        * Synchronization
+            + blocking (동기)
+                - send: 수신될 때까지 block
+                - receive: 메시지를 수신할 때까지 block
+            + non-blocking (비동기)
+                - send: 전송하고 멈춤 없이 계속함
+                - receive: valid하거나 null한 메시지를 수신하더라도 계속 수신함
