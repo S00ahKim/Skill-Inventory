@@ -14,3 +14,4 @@
 2. [02 OS Structures](02%20OS%20Structures.md)
 3. [Process](03%20Process.md)
       * [동시성(Concurrency) vs 병렬성(Parallelism)](https://seamless.tistory.com/42)
+      * [프로세스 생성과 실행](https://jihooyim1.gitbooks.io/unixbasic/content/contents/06.html)
