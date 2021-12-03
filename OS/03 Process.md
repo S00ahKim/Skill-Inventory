@@ -88,6 +88,7 @@
     * 다시 이전에 작업한 프로세스를 획득하면 컨텍스트 복원
 - 주의: 오버헤드가 발생 & 너무 잦으면 성능 저하
 
+
 ## 프로세스 작업
 > OS는 프로세스 생성, 종료를 제공해야 한다
 1. 생성
@@ -152,8 +153,27 @@
                     - 연관 없는 프로세스 간에도 사용 가능 (통신을 위해 이름이 있는 파일을 매개하기 때문)
         * ex. **Socket**
             + 네트워크 상에서 이루어지는 프로세스 간 통신.
-            + 커뮤니케이션의 양 종단으로 정의됨. (IP 주소 + 포트 = 소켓)
-            + IP 주소로 컴퓨터를 특정하고, port로 파이프를 특정한다.
+            + 커뮤니케이션의 양 종단(endpoint)으로 정의됨. (IP 주소 + 포트 = 소켓)
+                - IP 주소로 컴퓨터를 특정하고, port로 파이프를 특정한다.
+                - IP주소와 포트 정보가 있으면 클라이언트는 네트워크를 통해 서버 프로세스에 접근할 수 있다.
+                - 양방향 통신 & 서버(bind, listen, accept)-클라이언트(connect)
+            + Java Interface
+                - Socket (TCP)
+                - DatagramSocket (UDP)
+                - MulticastSocket (DatagramSocket의 하위 개념, 일종의 그룹에 추가)
+            + RPC (Remote Procedure Calls): 프로세스와 프로세스가 네트워크로 이어져 있을 때 발생하는 호출
+                - 메서드 호출 내부 간의 내부 통신을 숨겨주며, 별도의 원격 제어를 위한 코딩 없이 다른 주소 공간에서 함수나 프로시저를 실행할 수 있게 하는 프로세스간 통신 기술
+                - ex. `RMI` (Remote Method Invocation)
+                    - RPC의 Java 구현
+                    - 서버의 helper `Skeleton`, 클라이언트의 helper `Stub`
+                - `Stub`
+                    - 리모트의 프로그램을 대리함. 
+                    - 클라이언트에서 요청하는 데이터를 Marshaling하고 작업이 완료된 데이터를 다시 UnMarshaling한다.
+                    - Skeleton의 경우도 Stub과 하는 일이 같다.
+                - `Marshaling` / `Unmarshaling`
+                    - Marshaling은 데이터를 바이트로 쪼개서 TCP/IP같은 통신 채널을 통해 전송될 수 있는 형태롤 바꿔주는 과정
+                    - UnMarshaling은 반대로 전송 받은 바이트를 원래의 형태로 복원하는 과정
+- 이러한 IPC 통신에서 프로세스 간 데이터를 동기화하고 보호하기 위해 **세마포어**와 **뮤텍스**를 사용한다.
 
 
 #### IPC별 특징 요약
