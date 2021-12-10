@@ -79,6 +79,7 @@
 
 ## Context Switch
 > 프로세스 실행 중 발생한 인터럽트로 OS가 개입하여 프로세서에 할당된 프로세스를 바꾸는 것
+- 프로세스는 CPU들을 time sharing 해서 context switch를 하면서 concurrent하게 실행하도록 함
 - 프로세서 입장에서...
     * context? 프로세스 상태 정보. PCB.
     * context switching? PCB 정보가 바뀌는 것.
