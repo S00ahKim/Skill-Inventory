@@ -21,5 +21,6 @@
       * [구조체란](https://plas.tistory.com/110)
 4. [04 Thread & Concurrency](04%20Thread&Concurrency.md)
       * [[모던 자바 인 액션 정리] 7장. 병렬 데이터 처리와 성능](https://willseungh0.tistory.com/25?category=874438) 
+      * [Java 동시성(Concurrency) Threads and Executors](https://kimilb412-2.blogspot.com/2016/02/java-concurrency-threads-and-executors.html)
 5. [05 CPU Scheduling](05%20CPU%20Scheduling.md)
       * [[Operating System - Chapter 5] CPU 스케줄링](https://imbf.github.io/computer-science(cs)/2020/10/18/CPU-Scheduling.html)
