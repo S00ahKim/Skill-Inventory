@@ -4,7 +4,9 @@
 - 병렬성: 쓰레드마다 코어가 할당되어 각각의 코어에서 개별 쓰레드가 동시에 실행됨
     - 쓰레드 수가 코어 수보다 많을 경우에는 쓰레드 스케줄링(어떻게 동시성을 구현할 것인지를 결정) 필요
     - 자바의 쓰레드 스케줄링은 개발자가 제어 가능한 `우선 순위`방식, 제어 불가능한 `라운드 로빈` 방식 2가지 제공
-
+<br />
+<br />
+<br />
 
 # 버전별 병렬 처리 변화
 ## ~자바6
@@ -57,6 +59,10 @@
 - 장점
     * 직접 쓰레드를 만들 필요가 없음
     * task를 비동기 실행할 수 있으며, 기본적으로 쓰레드 풀 운영
+- 쓰레드 풀?
+    * ![쓰레드풀](../images/os_4_1_2.png)
+    * 목적: 병렬 처리가 늘어나면서 쓰레드 생성, 스케줄링으로 CPU 사용량이 늘어 생기는 성능 저하를 막기 위함
+    * 작업처리에 사용되는 스레드를 제한된 개수만큼 정해놓고 작업큐에 들어오는 작업들을 스레드가 하나씩 맡아 처리
 - 특징
     * 명시적으로 종료 필요
         ```java
@@ -89,37 +95,46 @@
     * Runnable, Callable 모두 지원
         + 둘 모두 함수형 인터페이스이지만, Callable은 리턴 타입을 갖는다.
         + 함수형 인터페이스? 1개의 추상 메소드를 갖고 있는 인터페이스. 자바 람다식이 함수형 인터페이스로만 접근됨. cf. `java.util.function`
+        + 쓰레드 풀의 쓰레드는 작업큐에서 Runnable 객체를 가져와 run() 메소드를 실행하거나, Callable 객체를 가져와 call()메소드를 실행한다. 
         + Callable의 리턴값을 받아오기 위해 executor는 Future라는 객체를 둔다. 
-            ```java
-            ExecutorService executor = Executors.newFixedThreadPool(1);
-            Callable<Integer> task = () -> {
-              try {
-                  TimeUnit.SECONDS.sleep(1);
-                  return 123; //Callable은 리턴값이 있다.
-              }
-              catch (InterruptedException e) {
-                  throw new IllegalStateException("task interrupted", e);
-              }
-            };
-            Future<Integer> future = executor.submit(task);
+        ```java
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<Integer> task = () -> {
+          try {
+              TimeUnit.SECONDS.sleep(1);
+              return 123; //Callable은 리턴값이 있다.
+          }
+          catch (InterruptedException e) {
+              throw new IllegalStateException("task interrupted", e);
+          }
+        };
+        Future<Integer> future = executor.submit(task);
 
-            //isDone은 Callable이 task를 끝내고 값을 리턴했는지를 확인한다.
-            System.out.println("future done? " + future.isDone());
+        //isDone은 Callable이 task를 끝내고 값을 리턴했는지를 확인한다.
+        System.out.println("future done? " + future.isDone());
 
-            //get은 Callable이 값을 줄 때까지 기다린다.
-            Integer result = future.get();
-            // future.get(1, TimeUnit.SECONDS); 너무 오래 걸릴 것 같으면 이렇게 제한 시간을 둘 수 있다.
+        //get은 Callable이 값을 줄 때까지 기다린다.
+        Integer result = future.get();
+        // future.get(1, TimeUnit.SECONDS); 너무 오래 걸릴 것 같으면 이렇게 제한 시간을 둘 수 있다.
 
-            System.out.println("future done? " + future.isDone());
-            System.out.print("result: " + result); 
-            /*
-            * 결과
-            * future done? false
-            * future done? true
-            * result: 123 
-            */
-            ``` 
-
+        System.out.println("future done? " + future.isDone());
+        System.out.print("result: " + result); 
+        /*
+        * 결과
+        * future done? false
+        * future done? true
+        * result: 123 
+        */
+        ``` 
+    * 작업은 `ExecutorService.submit()` 또는 `ExecutorService.execute()`로 추가할 수 있다.
+        + **execute()**
+            - 작업 처리 결과를 반환하지 않는다.
+            - 작업처리 도중 예외 발생시 스레드가 종료되고 해당 스레드는 스레드풀에서 제거된다.
+            - 스레드풀은 다른 작업처리를 위해 새로운 스레드를 생성한다.
+        + **submit()**
+            - 작업 처리 **결과를 반환**한다. (작업큐에 작업을 저장하는 즉시 Future 객체를 리턴함)
+            - 작업처리 도중 예외가 발생하더라도 스레드는 종료되지 않고 다음 작업을 위해 **재사용**된다.
+            - 가급적 스레드의 생성 오버헤드를 줄이기 위해 submit()을 사용하는 것이 좋다. 
 
 
 ## 자바7: fork-join framework
@@ -136,3 +151,24 @@
     * 일반 구현 클래스들과 다른 점: work-stealing algorithm이 구현되어 있음
         + 미리 task를 적당히 분배해서 쓰레드 내부의 작업 큐에 넣었다고 해도, 어느 한쪽에서 일찍 끝나면 다른 쪽의 작업을 가져온다
         + 상황에 따라 다른 쓰레드의 큐에서 작업을 가져올지, shared inbound 큐에서 가져올지 결정한다
+
+
+
+## 자바8: 스트림
+- 스트림에 `parallel()`을 호출해서 병렬 스트림을 만들 수 있다.
+- 병렬 스트림? 각각의 쓰레드에서 처리할 수 있도록 스트림 요소를 여러 청크로 분할한 스트림.
+    1. 스트림 원소를 여러 서브 파트로 분리
+    2. 각각의 서브 파트 처리 작업을 서로 다른 쓰레드들에 위임
+    3. 모든 멀티코어 프로세서가 각각의 서브 파트 작업을 처리하도록 할당
+- 예시
+    ```java
+    Stream.iterate(1L, i -> i + 1)
+          .limit(n)
+          .parallel() // 스트림을 병렬 스트림으로 변환
+          .reduce(0L, Long::sum);
+    ```
+- 특징
+    * 병렬화 과정에서 스트림을 재귀적 분할 & 서브 스트림 할당 & 값 합치는 오버헤드 발생 (성능 측정 필요)
+    * 병렬 연산에서는 공유 자원의 가변 상태를 피해야 함
+    * Spliterator가 스트림을 자동으로 재귀적 분할함
+    * 내부적으로 유저 프로세서의 코어 수만큼 쓰레드를 가진 ForkJoinPool을 사용
