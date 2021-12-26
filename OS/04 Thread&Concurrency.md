@@ -64,7 +64,7 @@
 ## 쓰레드 라이브러리
 > 쓰레드 라이브러리는 쓰레드를 생성 및 관리하는 API를 제공한다.
 - 주요 쓰레드 라이브러리
-    * POSIX PThreads
+    * POSIX PThreads (스펙의 정의, 구현 X)
     * Windows thread
     * Java Threads (JVM-OS)
 - 자바에서의 쓰레드
