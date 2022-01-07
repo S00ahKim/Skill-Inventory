@@ -82,6 +82,8 @@
     }
     ```
     * 데커의 알고리즘과 구성 요소는 같음
+    * 차이점? 상대(B)에게 진입 기회를 양보한다는 점 (B에게 turn을 넘기고, B가 진입 의사 표시를 하지 않았다면 while에 걸리는 거 없이 바로 임계 영역 진입 가능)
+    * A 프로세스를 동작시키고 싶다면 임계 영역에 들어가고 싶다는 표시로 flag [A]를 true로 만든다.
 3. 아이젠버거와 맥과이어의 알고리즘
 4. 베이커리 알고리즘
 
@@ -99,8 +101,47 @@
     * 하나의 단위로서의
 1. test_and_set
     * 어떤 word의 내용을 검사하고 변경함
+    * 예시
+        ```
+        boolean TestAndSet(boolean &target)
+        {
+            boolean rv = traget;
+            traget = true;
+            return rv;
+        }
+
+        do{
+            while(TestAndSet(lock));  <--- 여기
+              //critical section
+            lock = false;
+              //remainder section
+        }
+        ``` 
+        1. 동시에 공유 자원에 접근하는 것을 막기 위해 임계 영역에 진입하는 프로세스가 lock을 획득해야 하고, 빠져나오면 lock을 방출해야 함으로써 **상호 배제**를 만족 (처음 접근한 프로세스가 통과한 이후, `여기`에서 lock이 true가 되어 다른 프로세스의 임계 영역 접근을 막음)
+        2. 임계 영역을 끝낸 프로세스는 lock을 false로 설정하여 다른 프로세스가 임계 영역에 접근할 수 있게 함으로써 **진행** 조건 만족
+        3. 하지만, **유한 대기** 조건은 만족할 수 없다
 2. compare_and_swap
     * 두 word의 내용을 원자적으로 교환함
+    * 예시
+        ```
+        void Swap(boolean &a, boolean &b)
+        {
+            boolean temp = a;
+            a = b;
+            b = temp;
+        }
+
+        do{
+            key = true;
+            while(key == true) Swap(lock, key);  <--- 여기
+              //critical section
+            lock = false;
+              //remainder section
+        }
+        ```
+        1. 임계 영역이 사용 중인지를 표시하는 lock은 false, 임계 영역에 들어갈 수 있는가를 표시하는 key는 true로 초기화하고, 둘을 swap 하면서 임계 영역에 하나의 프로세스만 진입할 수 있게 되어 **상호 배제** 조건 만족 (처음 접근한 프로세스가 통과한 이후, `여기`에서 lock이 true가 되어 다른 프로세스의 임계 영역 접근을 막음)
+        2. 임계 영역 실행이 끝난 프로세스는 lock을 false로 바꾸어 다른 프로세스가 임계 영역에 접근할 수 있게 함으로써 **진행** 조건 만족
+        3. 하지만, **유한 대기** 조건은 만족할 수 없다
 - 원자적 변수
     * 정수/부울 등 primitive type에 대한 원자적 연산 제공
     * 원자적 변수는 데이터에 경쟁 상태가 있을 수 있는 상황에서 상호 배제를 보장하는 데 사용함
