@@ -25,3 +25,5 @@
       * [쓰레드 풀이란?](https://cheershennah.tistory.com/170)
 5. [05 CPU Scheduling](05%20CPU%20Scheduling.md)
       * [[Operating System - Chapter 5] CPU 스케줄링](https://imbf.github.io/computer-science(cs)/2020/10/18/CPU-Scheduling.html)
+6. [06 Synchronization](06%20Synchronization.md)
+      * [뮤텍스(Mutex)와 세마포어(Semaphore)의 차이](https://worthpreading.tistory.com/90)
