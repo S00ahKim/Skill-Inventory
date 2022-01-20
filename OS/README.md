@@ -27,3 +27,6 @@
       * [[Operating System - Chapter 5] CPU 스케줄링](https://imbf.github.io/computer-science(cs)/2020/10/18/CPU-Scheduling.html)
 6. [06 Synchronization](06%20Synchronization.md)
       * [뮤텍스(Mutex)와 세마포어(Semaphore)의 차이](https://worthpreading.tistory.com/90)
+      * [세마포어: wait(), signal(), 이진, 계수형](https://jhnyang.tistory.com/101)
+      * [프로세스 관리: 모니터](https://copycode.tistory.com/83)
+      * [동기화 문제와 모니터](https://m.blog.naver.com/and_lamyland/221192481544)
