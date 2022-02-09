@@ -30,3 +30,5 @@
       * [세마포어: wait(), signal(), 이진, 계수형](https://jhnyang.tistory.com/101)
       * [프로세스 관리: 모니터](https://copycode.tistory.com/83)
       * [동기화 문제와 모니터](https://m.blog.naver.com/and_lamyland/221192481544)
+      * [왜 함수형 프로그래밍이 좋을까?](http://ruaa.me/why-functional-matters/)
+      * [Is Java 8 streams atomic?](https://stackoverflow.com/questions/39879935/is-java-8-streams-atomic)
