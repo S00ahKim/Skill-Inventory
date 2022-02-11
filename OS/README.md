@@ -32,3 +32,5 @@
       * [동기화 문제와 모니터](https://m.blog.naver.com/and_lamyland/221192481544)
       * [왜 함수형 프로그래밍이 좋을까?](http://ruaa.me/why-functional-matters/)
       * [Is Java 8 streams atomic?](https://stackoverflow.com/questions/39879935/is-java-8-streams-atomic)
+9. [09 Main Memory](09%20Main%20Memory.md)
+      * [세그멘테이션(Segmentation)](https://copycode.tistory.com/108)
