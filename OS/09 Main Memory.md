@@ -36,7 +36,7 @@ CPU ---(MMU)---> Physical Memory
 ```
 - 프로그램 실행 중에는 논리 주소를 물리 주소로 변환 필요
 - 변환 작업은 하드웨어 장치인 메모리 관리 장치(memory management unit, MMU)에서 수행
-- MMU에서는 relocation register가 base register 역할을 함 `?`
+- MMU에서는 relocation register가 base register 역할을 함.
 
 
 ## Dynamic loading
@@ -78,8 +78,9 @@ CPU ---(MMU)---> Physical Memory
 
 
 ## 쪼개서 할당
+> 쪼개서 할당하자!
+
 ### segmentation
-> 쪼개서 옮기자!
 - 프로세스를 세그먼트의 집합으로 여김
 - 물리적인 크기의 단위가 아닌 `논리적 내용의 단위`(의미가 같은)로 자름
 - 페이징 (=똑같은 크기로 쪼개기) 과 메모리 할당법은 같음
