@@ -54,7 +54,46 @@
 - 테스트의 기본 골자는 대개 `given`(주어진 데이터) `when`(처리할 로직) `then`(검증) 이다.
 - 서비스는 도메인 의존적으로 작성 (네이밍 등) `ex. join()` / 리포지토리는 좀 더 개발자스럽게 `ex. getById()`
 - 서비스 안에서 new로 레포지토리 객체를 생성하면 해당 인스턴스가 매번 생성될 우려가 있다. 이를 막기 위해 new로 생성하는 부분을 지우고, 서비스 생성자의 인자로 레포지토리를 주어 외부에서 생성할 수 있도록 하라. (= DI)
-- 컴포넌트스캔~
+
+### 스프링 빈 등록
+- `@Component` 어노테이션으로 자동으로 의존관계 설정 (ex. `@Controller`, `@Service`, ...)
+    * main 함수가 있는 패키지 하위를 쭉 스캔하면서 빈으로 등록하는 식
+    * 스프링이 **스프링 컨테이너**에 빈을 등록할 때, 기본으로 싱글톤으로 등록한다.
+- 자바 코드로 직접 스프링 빈 등록
+    ```java
+    @Configuration  // 스프링이 뜰 때 이걸 읽고
+    public class SpringConfig {
+      @Bean // 이걸 빈으로 등록하란 거구나 하고 로직 호출 & 등록 처리 (참고: 빈 이름이 메서드 이름)
+      public MemberService memberService() {
+        return new MemberService();
+      }
+    }
+    ```
+- 정형화된 컴포넌트(ex. 컨트롤러, 서비스, 리포지토리 등)의 경우 컴포넌트 스캔 방식을, 정형화되지 않거나 상황에 따라 구현 클래스를 변경해야 하는 경우 Configuration을 통해 스프링 빈으로 등록한다.
+
+### 스프링 빈 사용 (=의존성 주입)
+- 스프링이 관리하게 되면 스프링 컨테이너에 모두 등록을 해야 하고, 그걸 (공동) 사용하는 식이어야 함.
+- Inversion of Control: 객체의 생성을 제어한다는 관점
+- `@Autowired` (cf. 참고: 스프링의 관리 대상 객체에서만 동작함, 빈으로 등록하지 않은 객체에선 동작 안함)
+    * 생성자의 인자로 필요한 객체를 주고, 생성자에 어노테이션을 붙임
+      ```java
+      @Autowired
+      public MemberService(MemberRepository memberRepository) {...}
+      ``` 
+    * 필드로 주입: 스프링 뜰 때 외에는 바꿔줄 방법이 없다 (다른 설정을 준 컴포넌트로 생성하고 싶다면...?)
+      ```java
+      @Autowired private MemberRepository memberRepository;
+      ``` 
+    * setter로 주입: public이어야 해서 외부에 노출될 우려가 있다 (set하면 안 되는데 어느 팀원이 set한다면...?)
+      ```java
+      @Autowired
+      public setMemberRepository(MemberRepository memberRepository) {...}
+      ``` 
+
+### DB와의 연결
+- (구) JDBC 직접 연결
+    * JDBC 드라이버로 DB와 커넥션을 맺고 직접 SQL 문을 던지는 방식
+    * 설정이 복잡하고 코딩이 어려움
 
 
 ## 참고
