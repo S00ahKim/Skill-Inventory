@@ -52,7 +52,7 @@
 ### Mono와 Flux
 - [리액티브 스트림즈](http://www.reactive-streams.org/)는 비동기 스트림 처리를 위한 표준이다.
     * 스트림은 시간의 흐름에 따라 생성되는 일련의 `signal`(=event/data)으로 정의됨
-    * signal의 종류는 실제 데이터를 담는 `next`, 끝났음을 의미하는 `complete`, 에러를 의미하는 `error가` 있다.
+    * signal의 종류는 실제 데이터를 담는 `next`, 끝났음을 의미하는 `complete`, 에러를 의미하는 `error`가 있다.
     * Publisher는 스트림을 정의하며, Subscriber는 signal을 처리한다.
         + Publisher
             * `subscribe(Consumer<? super T> consumer`) 구독
@@ -70,7 +70,7 @@
     * 콜드 시퀀스는 구독 시점에 데이터를 새로 생성하며, 핫 시퀀스는 구독 여부에 관계 없이 데이터가 생성되고 구독 시점부터 signal을 받게 된다. **WebClient의 요청은 콜드 시퀀스**에 해당한다.
 - Mono와 Flux는 Reactor의 주요 객체.
     * 둘 다 Publisher
-    * Flux는 0~N 개의 데이터를, Mono는 0~1 개의 데이터를 발생시킨다
+    * Flux는 0-N 개의 데이터를, Mono는 0-1 개의 데이터를 발생시킨다
     * **WebClient 클래스를 사용할 때에는 웹클라이언트가 생성하는 Mono를 이용해서 데이터를 처리하는 형태**
 
 
