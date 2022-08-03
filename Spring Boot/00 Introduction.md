@@ -74,7 +74,7 @@
 ### 스프링 빈 사용 (=의존성 주입)
 - 스프링이 관리하게 되면 스프링 컨테이너에 모두 등록을 해야 하고, 그걸 (공동) 사용하는 식이어야 함.
 - Inversion of Control: 객체의 생성을 제어한다는 관점
-- `@Autowired` (cf. 참고: 스프링의 관리 대상 객체에서만 동작함, 빈으로 등록하지 않은 객체에선 동작 안함)
+- `@Autowired`
     * 생성자의 인자로 필요한 객체를 주고, 생성자에 어노테이션을 붙임
       ```java
       @Autowired
@@ -89,11 +89,31 @@
       @Autowired
       public setMemberRepository(MemberRepository memberRepository) {...}
       ``` 
+- 기타
+    * 스프링의 관리 대상 객체에서만 동작함, 빈으로 등록하지 않은 객체에선 동작 안함
+    * 생성자가 하나만 있을 경우 어노테이션을 생략할 수 있음
 
 ### DB와의 연결
 - (구) JDBC 직접 연결
     * JDBC 드라이버로 DB와 커넥션을 맺고 직접 SQL 문을 던지는 방식
     * 설정이 복잡하고 코딩이 어려움
+- JdbcTemplateㄴ
+    ```java
+    // ex. 직접 JdbcTemplate을 주입받을 수는 없다
+    @Autowired
+    public JdbcTemplateRepository(Datasource datasource) {
+      jdbcTemplate = new JdbcTemplate(datasource);
+    }
+    ``` 
+    * 순수 JDBC와 동일하게 환경설정
+    * [템플릿 메소드 패턴](../DesignPattern/TemplateMethodPattern.md)을 적용하여 직접 연결할 때 작성해야 했던 반복문을 대부분 제거함
+    * SQL은 직접 작성해야 함
+
+### 테스트
+- 좋은 테스트 코드를 고민하자
+- `@SpringBootTest` 어노테이션을 사용해서 스프링 컨테이너와 테스트를 함께 실행할 수 있다
+- 스프링 컨테이너와 엮이는 부분 없는 유닛 테스트는 좀 더 빠르다
+- `@Transactional` 어노테이션을 테스트 케이스에 붙이면 테스트 시작 전에 트랜잭션을 시작해서 완료될 때 롤백하여 다음 테스트에 영향을 주지 않는다
 
 
 ## 참고
