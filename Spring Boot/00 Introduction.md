@@ -97,7 +97,7 @@
 - (구) JDBC 직접 연결
     * JDBC 드라이버로 DB와 커넥션을 맺고 직접 SQL 문을 던지는 방식
     * 설정이 복잡하고 코딩이 어려움
-- JdbcTemplateㄴ
+- JdbcTemplate
     ```java
     // ex. 직접 JdbcTemplate을 주입받을 수는 없다
     @Autowired
@@ -108,6 +108,15 @@
     * 순수 JDBC와 동일하게 환경설정
     * [템플릿 메소드 패턴](../DesignPattern/TemplateMethodPattern.md)을 적용하여 직접 연결할 때 작성해야 했던 반복문을 대부분 제거함
     * SQL은 직접 작성해야 함
+- JPA
+    * [myBatis보다 높은 점유율을 보이는](../Spring/MyBatis%20vs%20JPA.md), 자바 진영의 ORM 표준 (대표적 구현: Hibernate)
+    * EntityManager를 주입하여 사용
+- 스프링 데이터 JPA
+    * JPA를 더 편리하게 사용할 수 있게 해주는 프레임워크 (JPA 선행학습 필요!)
+    * 단순한 중복 코드를 확연하게 줄임
+    * 레포지토리의 구현 클래스 없이 인터페이스만으로 개발 가능 (이유: 스프링 데이터 JPA가 컴포넌트 스캔을 대신 해줌)
+    * 실무에서는 기본으로 스프링 데이터 JPA + JPA를 사용하고, 동적 쿼리는 QueryDSL 라이브러리 사용 / 여타 프레임워크와 혼용
+
 
 ### 테스트
 - 좋은 테스트 코드를 고민하자
