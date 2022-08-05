@@ -124,6 +124,38 @@
 - 스프링 컨테이너와 엮이는 부분 없는 유닛 테스트는 좀 더 빠르다
 - `@Transactional` 어노테이션을 테스트 케이스에 붙이면 테스트 시작 전에 트랜잭션을 시작해서 완료될 때 롤백하여 다음 테스트에 영향을 주지 않는다
 
+### AOP
+- 공통 관심 사항 vs 핵심 관심 사항
+    * 로직은 핵심 관심 사항 (ex. `회원가입()`, `회원탈퇴()`)
+    * 많은 로직에 공통으로 필요한 부분은 공통 관심 사항 (ex. `메소드_실행_시간_구하기()`)
+- 왜 AOP로 둘을 분리하는가?
+    * 공통 로직 + 비즈니스 로직 = 유지보수 어려움
+    * 공통 로직임에도 따로 메서드화 하기 어려움
+- 예
+    ```java
+    // ~Service, ~Repository 처럼 정형화된 방식이 아니라 개발자 정의 방식이라 @Configuration에 빈을 등록하는 것을 추천
+    @Aspect
+    public class TimeTraceAop {
+      @Around("execution(* hello.hellospring..*(..))") // 이 AOP가 적용될 범위 지정
+      public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        System.out.println("START " + joinPoint.toString());
+        try {
+          return joinPoint.proceed();
+        } finally {
+          long finish = System.currentTimeMillis();
+          long timeMs = finish - start;
+          System.out.println("END " + joinPoint.toString() + " " + timeMs + "ms");
+        }
+      }
+    }
+    ```
+- AOP 적용 이후 의존관계
+    * 컨트롤러 -> (프록시 서비스) -> 서비스
+    * 가짜 객체를 만들어서 AOP의 실행이 끝나면 proceed()로 실제 객체의 로직이 실행됨
+    * 이 프록시 서비스는 SpringCGLib에서 만들어준다.
+    * 위의 `예`와 같이 어떤 패키지 전체에 적용된다면 프록시 컨트롤러 -> 컨트롤러 -> 프록시 서비스 -> 서비스 -> ...
+
 
 ## 참고
 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8)
