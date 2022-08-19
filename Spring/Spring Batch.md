@@ -28,7 +28,7 @@
 - 데이터를 읽음 (DB, json, xml, file, custom,...)
 - 대표적 구현체 JdbcPagingItemReader는 ItemStream를 같이 구현하는데, 이는 주기적으로 상태를 저장하고 오류가 발생하면 해당 상태에서 복원하는 역할을 함
 - 구현체 종류
-    1. Cursor 기반 구현체: DB와 커넥션을 맺고 커서를 옮기면서 데이터를 가져옴. 스트리밍.(ex. `JdbcCursorItemReader`, `HibernateCursorItemReader`, `StoredProcedureItemReader`)
+    1. Cursor 기반 구현체: DB와 커넥션을 맺고 커서를 옮기면서 데이터를 가져옴. 스트리밍. (ex. `JdbcCursorItemReader`, `HibernateCursorItemReader`, `StoredProcedureItemReader`)
     2. Paging 기반 구현체: 한번에 지정한 사이즈 만큼 데이터를 가져옴. 정렬 필수. (ex. `JdbcPagingItemReader`, `HibernatePagingItemReader`, `JpaPagingItemReader`)
 
 
