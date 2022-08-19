@@ -8,3 +8,4 @@ https://goodteacher.tistory.com/344
 ㄴ https://velog.io/@syleemk/JPA-JPA-%EC%99%9C-%EC%8D%A8%EC%95%BC%ED%95%98%EB%8A%94%EA%B0%80
 
 
+ 
