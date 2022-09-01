@@ -38,3 +38,9 @@
     - uri는 리소스를 식별!
     - HTTP 메서드로 행위(조회, 등록, 수정, 삭제 등)를 식별!
     - 명사랑 동사로 구분하면 좀 편하다.
+- 용어
+    * document(문서): 단일 개념 (ex. `/members/1`)
+    * collection(컬렉션): 서버가 관리하는 리소스 디렉토리 (ex. `/members`)
+    * store(스토어): 클라이언트가 관리하는 리소스 저장소 (ex. `/files`)
+    * controller, control-uri: 위 세가지로 제어가 어려운 경우 사용 (ex. `/delete-members`)
+        + 현실 세계에서는 제약 등의 이유로 엄격하게 지키기 어려울 수 있기 때문
