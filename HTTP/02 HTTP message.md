@@ -14,8 +14,8 @@
         + 요청(request-line): `메서드-요청 URL-버전`
         + 응답(status-line): `버전-상태 코드-사유 구절`
     * `메서드`? 클라이언트 입장에서 서버가 리소스에 수행했으면 하는 동작
-        + PUT: 서버에 요청 메시지의 본문을 저장한다.
-        + POST: 서버가 처리해야 할 데이터를 보낸다. 
+        + PUT: 서버에 요청 메시지의 본문을 저장한다. 기존에 있는 것을 대체. 클라가 리소스의 uri를 알고 있다.
+        + POST: 서버가 처리해야 할 데이터를 보낸다. 새로운 것을 생성. 클라가 리소스의 uri를 모른다.
     * `요청 URL`? 요청 대상 리소스의 경로
     * `버전`? 이 메시지에서 사용 중인 HTTP 버전. 통신 상대의 능력(이 버전까지 이해 가능), 메시지 형식에 대한 단서 파악 용도. 가장 높은 버전을 가리킴. 2.22>2.3
     * `상태 코드`? 요청 중 일어난 일을 설명하는 숫자
@@ -128,6 +128,9 @@
 - 또는 POST로 주문 후 응답을 3xx대로 주어 주문 결과 화면을 GET으로 리다이렉트해서 새로고침 해도 GET으로 조회
 
 ## 5. 헤더
+> 각종 부가 정보를 넣을 수 있으며, 표준 헤더의 양도 상당하다.
+
+### 초창기의 헤더 구분
 1. 일반 헤더
     - 메시지에 대한 기본적인 정보 제공. 요청, 응답 양측이 사용
     - HTTP/1.0은 Cache-Control과 같은 `일반 캐시 헤더`로 로컬에 캐시할 수 있게 함. 캐시의 시점과 방식에 대한 지시자를 제공
@@ -149,3 +152,66 @@
 5. 확장 헤더
     - 애플리케이션 개발자가 정의한 헤더
     - HTTP가 이해하지 못하더라도 전달 가능
+
+### 최근(RFC723x)의 헤더 구분
+- 엔티티(Entity) -> 표현(Representation)
+- 표현(Representation) = 메타데이터(representation Metadata; 표현 데이터를 해석할 수 있는 정보) + 데이터(Representation Data; 실제 데이터)
+- 메시지 본문(message body, 페이로드)을 통해 표현 데이터를 전달
+
+1. 표현 헤더 (요청&응답)
+    - `Content-Type`: 표현 데이터의 형식 (미디어 타입, 문자 인코딩)
+    - `Content-Encoding`: 표현 데이터의 압축 방식 ()
+    - `Content-Language`: 표현 데이터의 자연 언어 (표현 데이터의 자연 언어)
+    - `Content-Length`: 표현 데이터의 길이 (바이트 단위, Transfer-Encoding의 경우 사용 불가)
+2. 협상 헤더 (요청)
+    > 모든 서버가 요청대로 주는 것은 아니지만, 가능한 곳에서는 요청대로 준다. 
+    - `Accept`: 클라이언트가 선호하는 미디어 타입 전달
+    - `Accept-Charset`: 클라이언트가 선호하는 문자 인코딩
+    - `Accept-Encoding`: 클라이언트가 선호하는 압축 인코딩
+    - `Accept-Language`: 클라이언트가 선호하는 자연 언어
+    - cf. 우선순위 부여 가능 (ex. `Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7`)
+    - cf. 구체적인 것이 우선한다 (ex. `Accept: text/*, text/plain, text/plain;format=flowed, */*`에서는 자세히 기입한 요소 순으로 우선순위가 높다. 각각 3, 2, 1, 4 순위)
+3. 전송 방식 헤더
+    - `Transfer-Encoding`, `Range`, `Content-Range`
+    - 전송 방식?
+        * 단순 전송 ex. `Content-Length: 3423`
+        * 압축 전송 ex. `Content-Encoding: gzip`
+        * 분할 전송 ex. `Transfer-Encoding: chunked` (덩어리로 쪼개 보냄)
+        * 범위 전송
+            + 요청 ex. `Range: bytes=1001-2000`
+            + 응답 ex. `Content-Range: bytes 1001-2000 / 2000`
+4. 일반 정보 헤더
+    - `From`: 유저 에이전트의 이메일 정보 (요청; 잘 사용되지 않음, 검색 엔진에서 크롤링 시 문제가 생길 경우 연락할 담당자 등)
+    - `Referer`: 이전 웹 페이지 주소 (요청)
+    - `User-Agent`: 유저 에이전트 애플리케이션 정보 (요청)
+    - `Server`: 요청을 처리하는 오리진 서버의 소프트웨어 정보 (응답; 오리진 서버란 최종으로 표현 데이터를 주는 서버)
+    - `Date`: 메시지가 생성된 날짜 (응답; 초기에는 요청에서도 썼지만 최근의 표준은 응답에서만)
+5. 특별한 정보 헤더
+    - `Host`: **필수** 요청한 호스트 정보(도메인) ex. `Host: aaa.com` (가상호스트 대응)
+    - `Location`: 페이지 리다이렉션
+        + 201 (Created): 요청에 의해 생성된 리소스 URI
+        + 3xx (Redirection): 요청을 자동으로 리디렉션하기 위한 대상 리소스
+    - `Allow`: 허용 가능한 HTTP 메서드
+        + 405 (Method Not Allowed)에서 응답에 포함해야함
+    - `Retry-After`: 유저 에이전트가 다음 요청을 하기까지 기다려야 하는 시간
+        + 503 (Service Unavailable): 서비스가 언제까지 불능인지 알려줄 수 있음
+6. 인증 헤더
+    - `Authorization`: 클라이언트 인증 정보를 서버에 전달 (다양한 인증 매커니즘이 있는데, 각각 여기에 들어갈 값이 다름)
+    - `WWW-Authenticate`: 리소스 접근시 필요한 인증 방법 정의
+        + 401 Unauthorized 응답과 함께 사용
+7. 쿠키 헤더
+    > 사용자 로그인 세션 관리 & 광고 정보 트래킹 등에 사용됨 / 보안 주의 (민감 정보 XX) / 최소한으로 사용해야 함
+    - `Set-Cookie`: 서버에서 클라이언트로 쿠키 전달(응답)
+        * 생명주기
+            + `Set-Cookie: expires=Sat, 26-Dec-2020 04:39:21 GMT` 만료일이 되면 쿠키 삭제
+            + `Set-Cookie: max-age=3600` (3600초) 0이나 음수를 지정하면 쿠키 삭제
+        * 도메인
+            + `Set-Cookie: domain=example.org` 명시한 문서 기준 도메인 + 서브 도메인 모두 쿠키 접근 가능
+        * 경로
+            + `Set-Cookie: path=/home` 이 경로를 포함한 하위 경로 페이지만 쿠키 접근 (보통은 path=/)
+        * 보안
+            + `Set-Cookie: Secure` https인 경우에만 전송
+            + `Set-Cookie: HttpOnly` 자바스크립트(ex. document.cookie)에서 접근 불가(XSS 공격 방지), HTTP 전송에만 사용
+            + `Set-Cookie: SameSite`: 요청 도메인과 쿠키에 설정된 도메인이 같은 경우만 쿠키 전송(XSRF 공격 방지)
+    - `Cookie`: 클라이언트가 서버에서 받은 쿠키를 저장하고, HTTP 요청시 서버로 전달
+    - cf. 쿠키를 사용하지 않으면 요청할 때마다 사용자 개인 정보가 포함된다 (why? stateless)
