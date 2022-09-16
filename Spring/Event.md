@@ -16,7 +16,7 @@
 - `publishEvent` 메서드로 이벤트를 생성한다.
 
 ### 3. Event Listener
-> 이벤트를 소비함
+> 이벤트를 소비함 (처리 방법 정의)
 - `ApplicationListener<{Event_Name}>`을 상속받음
     * 다중 상속이 불가능하기 때문에 제약이 있다면, `@EventListener` 어노테이션 붙이기. 그러면 Event도 상속으로 만들지 않아도 됨.
 - `onApplicationEvent`를 오버라이딩하여 이벤트를 소비한다.
@@ -32,5 +32,6 @@
 
 
 ## ref.
+- https://www.blog.ecsimsw.com/entry/ApplicationEventPublisher-%EC%9D%B4%EB%B2%A4%ED%8A%B8%EB%A5%BC-%EB%8B%A4%EB%A3%A8%EB%8A%94-%EB%B0%A9%EB%B2%95
 - https://sabarada.tistory.com/184
 - https://sabarada.tistory.com/188
