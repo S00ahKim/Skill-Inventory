@@ -1,5 +1,2 @@
-# Unignore all with extensions
-!*.*
-
 # Ignore targets
 target/
