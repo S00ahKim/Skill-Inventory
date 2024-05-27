@@ -19,6 +19,7 @@
 - VM과 차이
     * VM = [하드웨어 레벨] 서버 + **하이퍼바이저** + 독립적인 가상 OS & APP
     * 도커 = [OS 레벨] 서버 + 도커 데몬 & 컨테이너
+- 쿠버네티스는 도커의 특징을 이용하여 여러 서버에서 여러 컨테이너를 잘 실행시키는 방법을 제공
 
 ## 사용법
 - 도커 설치 `brew install docker`
@@ -58,11 +59,36 @@
 
       RUN apt-get update && apt-get install -y curl python-dev # 사용자가 지정한 명령 실행
 
+      ARG my_ver=1.0 # 매개변수
+
       WORKDIR /root # 이미지의 작업 폴더
       COPY hello.py . # 로컬 호스트의 파일을 이미지에 복사
-      ENV my_ver 1.0 # 이미지의 환경변수 지정
+      ENV my_ver $my_ver # 이미지의 환경변수 지정
 
       CMD ["python", "hello.py", "guest"] # 이미지 실행 시 디폴트로 실행되는 명령 지정
       ```
+    * CMD가 디폴트 커맨드라면, ENTRYPOINT는 이미지를 실행 가능한 바이너리로 만드는 지시자
+        + 만약 CMD 대신 `ENTRYPOINT` 를 사용한다면 덮어씌워지지 않는 초기 실행 커맨드를 지정할 수 있다.
+        + 강제로 덮어씌우는 방법이 존재하긴 함 `docker run --entrypoint=<덮어씌울_커맨드> <(opt.)전달할_인자>`
+        + 이미지 실행 시 무조건 호출됨
+        + 그래서 "guest"를 삭제한 후 실행 시 파라미터를 전달하면 그대로 전달됨 ex. `docker run hello:4 new-guest`
 - 도커 빌드 `docker build <도커파일_경로> -t <이미지_이름>:<태그>`
 - 컨테이너 실행 시 환경변수 주입 `docker run -e <키>=<값> <레지스트리>/<이미지>:<태그>`
+- 이미지 빌드 시 인자 주입 `docker build . -t <이미지_이름>:<태그> --build-args <키>=<값>`
+    * 도커파일 안에서 정의된 ARG를 덮어씌울 수 있음
+    * 빌드 시점에 위와 같이 덮어씌워도 실행 시점에 환경변수 설정 가능하며 최우선됨
+- 포트 포워딩 `docker run -p <호스트_포트>:<컨테이너_포트> <이미지_이름>`
+    * 외부의 트래픽을 컨테이너 내부로 전달하기 위해 로컬 호스트 서버와 컨테이너의 포트를 매핑
+    * 내부IP, 공인IP 모두로 접근할 수 있음 (노드 기준 안에서 호출, 밖에서 호출)
+    * cf. 내부IP 확인법 `hostname -i` `ifconfig`, 공인IP `curl ifconfig.co` (단 공인IP가 서버에 할당이 안되어 있다면 게이트웨이IP)
+- 볼륨 마운트 `docker run -v <호스트_주소>:<컨테이너_주소> <이미지_이름>`
+    * 컨테이너는 기본적으로 휘발성 프로세스라 데이터를 지속적으로 저장하려면 영구 공간을 연결해야 함
+    * 명령어의 호스트 주소가 영구 공간에 해당. 컨테이너의 데이터를 호스트에 저장하는 명령어.
+    * 공간을 공유하는 개념이므로, 마운트한 볼륨의 파일을 수정하면 컨테이너에서도 인식함
+- 컨테이너 유저 변경
+    * 기본적으로 컨테이너 유저는 root 이나 보안상 이유로 일반 유저 지정 가능
+    * 도커파일 ex. `RUN adduser --disabled-password --gecos "" ubuntu`
+    * 컨테이너 실행 ex. `docker run --user root -it my-user bash`
+- 생성된 모든 컨테이너 삭제
+    * `docker rm $(docker ps -aq) -f`
+    * `docker rmi $(docker images -q) -f`
