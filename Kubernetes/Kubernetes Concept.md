@@ -17,6 +17,8 @@
 - 컨트롤러
     - 현재 상태와 바라는 상태가 동일해지게 변경하는 주체
     - control-loop 를 돌며 리소스 모니터링하다가 이벤트에 따라 사전 정의된 작업을 수행함
+    - ReplicaSet, Deployment, Job, CronJob, DaemonSet, StatefulSet 과 같은 이들 컨트롤러는 kube-controller-manager 컴포넌트 안에서 동작함
+    - 쿠버네티스가 제공하는 내장 컨트롤러 외에 사용자가 정의한 컨트롤러를 생성할 수 있음
 - 리소스
     - 모든 것이 리소스로 표현됨
     - ex. Pod, ReplicaSet, Deployment 등
