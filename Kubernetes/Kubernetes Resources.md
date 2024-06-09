@@ -1,14 +1,19 @@
 # 쿠버네티스 리소스
-> * 리소스 = 시스템 내에서 관리되는 모든 엔티티 (추상적인 개념, 오브젝트 정의에 사용되는 개념)
-> * 오브젝트 = 특정 리소스를 기반으로 생성된 인스턴스 (실제로 클러스터 내에서 관리되고 동작하는 구체적인 개체)
-> * 종류가 매우 많아 자주 사용되는 것만 메모함 (모두 보기: `kubectl api-resources`)
-
-## 바로가기
-- [쿠버네티스 리소스](#쿠버네티스-리소스)
-  - [바로가기](#바로가기)
+- 쿠버네티스 리소스: 시스템 내에서 관리되는 모든 엔티티 (추상적인 개념, 오브젝트 정의에 사용되는 개념)
+  - 종류가 매우 많아 자주 사용되는 것만 메모함 (모두 보기: `kubectl api-resources`)
+  - 작은 단위의 리소스를 조합하여 큰 단위 리소스를 만듦 (컨테이너 > 파드 > 서비스, 디플로이먼트 > 애플리케이션)
   - [Pod](#pod)
   - [ConfigMap](#configmap)
   - [Secret](#secret)
+  - [Service](#service)
+  - [ReplicaSet](#replicaset)
+  - [Job](#job)
+  - [CronJob](#cronjob)
+  - [DaemonSet](#daemonset)
+  - [StatefulSet](#statefulset)
+- 쿠버네티스 오브젝트: 특정 리소스를 기반으로 생성된 인스턴스 (실제로 클러스터 내에서 관리되고 동작하는 구체적인 개체)
+- 쿠버네티스 컴포넌트: 시스템 안에서 운영을 담당하는 다양한 오브젝트
+  - ex. 노드가 배정되지 않은 새로 생성된 파드를 감지하고, 실행할 노드를 선택하는 컨트롤 플레인 컴포넌트인 kube-scheduler는 Pod 오브젝트
 
 ## Pod
 - 쿠버네티스의 최소 실행 단위
@@ -324,3 +329,274 @@
               secretRef:
                 name: ex-secret
         ```
+
+## Service
+- 쿠버네티스의 네트워크 담당
+- 파드 IP가 부여되는데 왜 필요한가? 안정성 때문
+    * 파드 = 불안정한ephemeral 자원 / 언제든지 종료될 수 있음 / 엔드포인트가 불안정하고 계속 추적해야함
+    * 서비스 = 파드 생명주기와 무관한 엔드포인트 제공 / 파드 앞단에서 트래픽을 파드로 전달하는 리버스 프록시 역할
+        + cf. 프록시 = 클라숨김, 리버스 프록시 = 서버숨김
+- 생성
+    ```yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        hello: world
+      name: ex-svc
+    spec:
+      ports:                # 서비스의 포트들
+      - port: 8080          # 서비스로 들어오는 포트
+        protocol: TCP       # 사용하는 프로토콜 (ex. TCP, UDP, HTTP)
+        targetPort: 80      # 트래픽을 전달할 컨테이너의 포트
+      selector:             # 트래픽을 전달할 컨테이너의 라벨
+        run: ex-nginx
+    ```
+- 서비스 탐색
+    * 서비스 리소스의 이름 기반 DNS 참조 가능
+        + 이름 법칙: `{서비스_이름}.{네임스페이스}.svc.cluster.local`
+        + svc.cluster.local 부분은 쿠버네티스 클러스터 도메인으로, 변경할 수 있지만 보통 기본값으로 사용함
+        + 클러스터 도메인 주소는 생략 가능하며, 생략된 부분은 디폴트로 채움
+    * 라벨 셀렉터를 이용하여 파드를 선택
+        + 파드의 이름을 직접 참조할 경우, 파드 생명주기에 따라 매번 서비스 내용이 변경되어야 함
+        + 라벨링으로 간접 참조(느슨한 연결)할 경우, 그 라벨을 가진 어떤 파드에든 트래픽 전달 가능하므로 서비스를 매번 변경해줄 필요 없음
+    * 탐색 순서
+        1. 도메인 호출
+        2. DNS Resolver가 도메인에 맞는 클러스터IP 호출 (= kube-dns 서비스의 IP)
+        3. kube-dns가 coredns를 사용하여 요청된 도메인에 맞는 IP 주소 얻음
+        4. 사용자에게 응답이 돌아감
+    * 모든 파드들은 클러스터 내부, 외부 DNS 질의를 coredns를 통해 수행함
+- 서비스 타입
+    * YAML 파일의 spec 하위 프로퍼티
+    * ClusterIP
+        + 디폴트
+        + 이 타입의 서비스 엔드포인트는 클러스터 내부에서만 접근 가능
+        + 네트워크 보안 및 관리를 위해 직접 트래픽을 받는 엔드포인트 최소화
+        + 다른 복잡한 네트워크 기능의 뼈대가 되어줌
+    * NodePort
+        + 도커 컨테이너 포트 매핑과 유사
+        + 호스트(노드)의 특정 포트 - 서비스의 특정 포트 연결
+        + 노드포트는 모든 노드에서 동일한 엔드포인트 제공함 (단, externalTrafficPolicy 옵션이 Cluster인 경우)
+        + 외부 트래픽을 서비스까지 전달할 수 있음
+    * LoadBalancer
+        + 노드 앞단에 로드밸런서를 두고 각 노드로 트래픽을 분산할 수 있게 함
+        + 퍼블릭 클라우드 플랫폼이 제공하는 로드밸런서를 연결할 수 있음 ex. ELB
+        + NodePort 타입은 노드포트 대역을 열어두고 이를 외부에 공개하는 방법이라면, LoadBalancer 타입은 서버를 내부 네트워크에 두고 로드밸런서만 외부 네트워크에 엔드포인트(웰노운포트)를 제공하는 식으로 열어두어 네트워크 보안성을 높임
+        + 로드밸런서가 클러스터 앞단에 있으면 사용자는 각각의 서버IP를 몰라도 로드밸런서의 IP/도메인 주소만 갖고도 요청을 보낼 수 있음 (쿠버네티스는 노드 역시 자유롭게 종료시킬 수 있어서 그때마다 노드IP 추적은 번거로움)
+            - 즉 ClusterIp가 파드 레벨에서 안정적 엔드포인트를 제공한다면, LoadBalancer 타입 서비스는 노드 레벨에서 안정적 엔드포인트를 제공
+    * ExternalName
+        ```yaml
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: my-external-service
+          namespace: default
+        spec:
+          type: ExternalName
+          externalName: external.example.com
+        ``` 
+        + 외부 DNS 주소에 대해 클러스터 내부에서 사용할 새로운 별칭을 만듦
+        + 위 예시의 경우, external.example.com 에 default 라는 별칭으로 접근 가능
+        + 쿠버네티스 클러스터에 편입되지 않는 외부 서비스에 쿠버네티스 네트워킹 기능을 연결하고 싶을 때 사용
+- 쿠버네티스 네트워크 모델의 특징
+    * 모든 리소스가 다른 모든 리소스를 (ex. 노드-노드, 파드-파드, 노드-파드) NAT 없이 고유 IP로 통신이 가능하다
+        + cf. 쿠버네티스 전신인 Borg 프로젝트는 NAT를 사용했는데 포트 충돌이 빈번해서 번거로웠기 때문에 독립적 네트워크 환경을 구성함
+    * 각 파드는 고유 IP를 할당받는다
+    * 파드IP에 클러스터 내부 어디서든 접근 가능하다 (에이전트도 마찬가지) 호스트 서버와의 종속성이 없다
+
+## ReplicaSet
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-replicaset
+  labels:
+    app: nginx
+spec:
+  replicas: 3                   # 복제해서 유지할 파드의 개수
+  selector:
+    matchLabels:                # 복제 개수를 유지할 파드의 라벨
+      app: nginx
+  template:                     # 복제할 파드 정의 (라벨 붙은 파드의 metadata, spec과 동일)
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+```
+- 파드의 고가용성 보장을 위해 복제를 수행하는 컨트롤러
+- `kubectl get replicaset` 으로 상태 조회 가능 (DESIRED, CURRENT, READY, AGE)
+- 레플리카셋이 복제를 담당하기는 하지만 실제 프로세스 실행은 역할/책임 범위를 벗어나기 때문에 파드 리소스를 활용함
+- **라벨은 여러개 지정 가능하지만, 대상 파드 정의는 1개여야 함**
+
+## Deployment
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3                   # 유지할 파드 개수
+  selector:
+    matchLabels:                # 배포할 파드의 라벨
+      app: nginx
+  strategy:
+    type: RollingUpdate         # 배포 전략
+    rollingUpdate:
+      maxUnavailable: 25%       # 최대 중단 파드 허용 개수/비율
+      maxSurge: 25%             # 최대 초과 파드 허용 개수/비율
+  template:                     # 복제할 파드 정의
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+```
+- 리소스 생성 `kubectl apply --record -f ex-dp.yaml`
+    * `--record` 롤백시 롤아웃 히스토리에서 사용한 커맨드를 볼 수 있게 하는 옵션
+- 애플리케이션 업데이트 및 배포 관련 기능 제공
+    * 롤링 업데이트 `설정에 따라 자동 적용`
+    * 롤백
+        + `kubectl rollout undo deployment {디플로이먼트_이름}` 바로 이전 버전으로 롤백
+        + `--to-revision` 옵션으로 특정 배포 버전으로도 롤백 가능
+    * 스케일 아웃 지원 `설정에 따라 자동 적용`
+    * 배포 상태 확인
+- 배포 전략
+    * 롤링 업데이트: 점진적 업데이트 (대부분의 경우)
+    * 리크리에이트: 일시적으로 전체 파드 삭제 후 새 파드 전체 생성
+- 디플로이먼트는 복제를 위해 레플리카셋을 만들고, 그 레플리카셋이 파드 복제본을 생성한다
+    * 디플로이먼트: 배포
+    * 레플리카셋: 복제
+    * 파드: 컨테이너 실행
+
+## Job
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-job
+spec:
+  template:
+    metadata:
+      name: example-job
+    spec:
+      containers:
+      - name: example
+        image: busybox
+        command: ["sh", "-c", "echo Hello, Kubernetes! && sleep 30"]
+      restartPolicy: OnFailure
+    backoffLimit: 2
+```
+- 한번 실행하고 완료되는 일괄처리 프로세스 전용
+- 잡도 결국 내부적으로는 파드를 통해 실행하므로, template은 파드 spec과 동일
+- `backoffLimit` 재시도 횟수
+    * 2로 설정된다면 총 3회 실행됨 (1트 + 설정된 만큼 트)
+    * 재시도 횟수가 설정되어 있는 경우, 잡이 멱등성을 보장하는지 확인 필요
+- 일반적인 파드는 Running 상태로 지속되나, 잡 리소스의 파드는 Completed 상태로 종료됨
+
+## CronJob
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: example-cronjob
+spec:
+  schedule: "*/1 * * * *"               # 잡을 실행할 주기 설정
+  jobTemplate:                          # 잡의 스펙을 동일하게 사용
+    spec:
+      template:
+        spec:
+          containers:
+          - name: example
+            image: busybox
+            command: ["sh", "-c", "echo Hello, Kubernetes! && sleep 30"]
+          restartPolicy: OnFailure
+```
+- 잡과 유사하지만 주기적으로 실행되어야 하는 경우
+- cron 형식으로 스케줄링 가능
+
+## DaemonSet
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-daemonset
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      name: nginx
+  template:
+    metadata:
+      labels:
+        name: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+```
+- 모든 노드에 동일한 파드를 실행시키려는 경우 사용함
+- 사용예: 리소스 모니터링, 로그 수집기 등 모든 노드에 대한 정보를 추출할 때
+- 클러스터에 신규 노드가 추가될 때 따로 작업하지 않아도 필요한 파드가 생성됨
+
+## StatefulSet
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx-statefulset
+spec:
+  serviceName: "nginx"                          # 스테이트풀셋과 연결할 서비스 이름
+  replicas: 3
+  selector:
+    matchLabels:                                # 스테이트풀하게 관리할 파드의 라벨
+      app: nginx
+  template:                                     # 복제할 파드의 정의
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-persistent-storage
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:                         # 동적으로 볼륨을 생성하는 프로퍼티
+  - metadata:
+      name: nginx-persistent-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+```
+- Stateful한 파드를 생성해야 하는 경우 사용
+    * 디플로이먼트/레플리카셋은 복제된 파드가 완벽히 동일함
+    * 스테이트풀셋은 동일한 이미지로 파드를 생성하지만, 각 파드가 **실행 시 순서에 따라 각자 다른 역할을 가지며 그 역할을 교체하지 못함**
+- 사용예
+    * 실행 순서에 따라 마스터/워커가 결정되는 클러스터
+    * 리더 선출이 필요한 클러스터
+    * 프라이머리-레플리카 구조 클러스터
+    * 파드마다 저장소가 다르게 지정되어야 하는 경우
+    * 순서대로 업데이트가 필요한 애플리케이션
+- 파드마다 고유한 식별자가 존재하며, 고유한 데이터를 보관함
+- 파드가 삭제된 경우 다른 파드로 쉽게 교체하지 못함
+- 생성된 이름에 무작위 문자열이 붙지 않고 순서가 붙고, 호스트명과 볼륨도 마찬가지
+- 레플리카 개수를 줄일 경우, 식별자 역순으로 파드가 삭제됨
