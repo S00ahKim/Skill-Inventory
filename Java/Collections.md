@@ -1,6 +1,6 @@
 # 컬렉션 프레임워크
 
-## 관계
+## 관계 
 ![관계](../images/java_collections.jpg)
 - ArrayList = 배열 기반, 임의의 요소 접근성 높음
 - LinkedList = 연결 기반, 데이터의 추가/삭제 잦을 경우 유리
