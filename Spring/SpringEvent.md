@@ -1,4 +1,4 @@
-# Event
+# Spring Event
 > Spring의 Bean과 Bean 사이의 데이터를 전달하는 방법중 하나
 * 대개는 DI를 통해 이루어짐
 * 이벤트는 빈이 이벤트를 ApplicationContext로 넘겨주고 이를 Listener에서 받아서 처리하는 식
